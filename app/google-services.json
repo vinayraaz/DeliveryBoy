@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "547986088121-akk15gmc73r0kvuaglkvt03v2huo69t2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.deliveryboy",
+            "certificate_hash": "d447cf482a44dd35742b0c35aee2e719f49a08c9"
+          }
+        },
+        {
           "client_id": "547986088121-jpot92c5v8lm9jpln02otnb9h5rrs6s6.apps.googleusercontent.com",
           "client_type": 3
         }
