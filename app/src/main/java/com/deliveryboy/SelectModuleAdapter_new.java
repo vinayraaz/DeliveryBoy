@@ -14,9 +14,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,8 +22,6 @@ import java.util.ArrayList;
 import in.varadhismartek.Utils.Constant;
 import in.varadhismartek.patashalaerp.AddWing.AddWingsActivity;
 import in.varadhismartek.patashalaerp.DashboardModule.DashboardActivity;
-import in.varadhismartek.patashalaerp.DashboardModule.UpdateActivity.UpdateSelelectModuleActivity;
-import in.varadhismartek.patashalaerp.R;
 import in.varadhismartek.patashalaerp.Retrofit.APIService;
 import in.varadhismartek.patashalaerp.Retrofit.ApiUtils;
 import retrofit2.Call;
@@ -37,7 +32,7 @@ import retrofit2.Response;
  * Created by varadhi on 25/9/18.
  */
 
-public class SelectModuleAdapter extends RecyclerView.Adapter<SelectModuleViewHolder> {
+public class SelectModuleAdapter_new extends RecyclerView.Adapter<SelectModuleViewHolder> {
 
     private SparseBooleanArray itemStateArray = new SparseBooleanArray();
     public ArrayList<SelectModuleModel> arrayList;
@@ -50,8 +45,9 @@ public class SelectModuleAdapter extends RecyclerView.Adapter<SelectModuleViewHo
     String update;
     boolean bSelect =false;
     String moduleStatus;
+    String strModuleName;
 
-    public SelectModuleAdapter(ArrayList arrayList, Context mContext, Button btn_SelectAll, Button btn_Save) {
+    public SelectModuleAdapter_new(ArrayList arrayList, Context mContext, Button btn_SelectAll, Button btn_Save) {
         this.arrayList = arrayList;
         this.mContext = mContext;
         checkedArrayList = new ArrayList<>();
@@ -62,8 +58,8 @@ public class SelectModuleAdapter extends RecyclerView.Adapter<SelectModuleViewHo
 
     }
 
-    public SelectModuleAdapter(ArrayList<SelectModuleModel> arrayList, Context mContext,
-                               Button btn_selectAll, Button btn_Save, String update) {
+    public SelectModuleAdapter_new(ArrayList<SelectModuleModel> arrayList, Context mContext,
+                                   Button btn_selectAll, Button btn_Save, String update) {
         this.arrayList = arrayList;
         this.mContext = mContext;
         this.btnSelectAll = btn_selectAll;
@@ -88,61 +84,67 @@ public class SelectModuleAdapter extends RecyclerView.Adapter<SelectModuleViewHo
         boolean flag;
         switch (update) {
             case Constant.UPDATE:
-
                 holder.check_box.setText(adapterPojoClass.getModuleNAme());
+                System.out.println("name**"+adapterPojoClass.getModuleNAme());
+
+                 strModuleName = arrayList.get(position).getModuleNAme();
                 flag = adapterPojoClass.isModuleSelected();
+                if (strModuleName.equals("Payroll")||strModuleName.equals("Library")||strModuleName.equals("Notifications")
+                        ||strModuleName.equals("Timeline")||strModuleName.equals("Chat")||strModuleName.equals("Gallery")
+                        ||strModuleName.equals("Newsletters")||strModuleName.equals("Visitors")||strModuleName.equals("Transport")
+                        ||strModuleName.equals("Canteen")||strModuleName.equals("Remainder Alerts")) {
 
-
-                if (flag) {
-                    holder.check_box.setBackgroundColor(Color.parseColor("#72d548"));
-                    holder.check_box.setTextColor(Color.WHITE);
-                    checkedArrayList.add(arrayList.get(position).getModuleNAme());
-                    Log.d("AaCheckedArrayList", "" + checkedArrayList.size());
-
-                } else {
-                    holder.check_box.setBackgroundColor(Color.WHITE);
+                    if (flag) {
+                        holder.check_box.setBackgroundColor(Color.parseColor("#72d548"));
+                        holder.check_box.setTextColor(Color.WHITE);
+                        checkedArrayList.add(arrayList.get(position).getModuleNAme());
+                    }
+                }else {
+                    holder.check_box.setBackgroundColor(Color.YELLOW);
                     holder.check_box.setTextColor(Color.BLACK);
-                    checkedArrayList.remove(arrayList.get(position).getModuleNAme());
-                    Log.d("AaCheckedArrayList1", "" + checkedArrayList.size());
-
-
+                    checkedArrayList.add(arrayList.get(position).getModuleNAme());
                 }
+
+
 
                 holder.check_box.setChecked(flag);
                 holder.check_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                        if (!adapterPojoClass.isModuleSelected()) {
-                            checkedArrayList.add(holder.check_box.getText().toString());
-                            adapterPojoClass.setModuleSelected(true);
-
-                            holder.check_box.setBackgroundColor(Color.parseColor("#72d548"));
-                            holder.check_box.setTextColor(Color.WHITE);
-                        } else {
-                            checkedArrayList.remove(holder.check_box.getText().toString());
-                            adapterPojoClass.setModuleSelected(false);
-                            holder.check_box.setBackgroundColor(Color.WHITE);
-                            holder.check_box.setTextColor(Color.BLACK);
-                        }
-
                         String moduleName = arrayList.get(position).getModuleNAme();
-                        String moduleStatus = String.valueOf(arrayList.get(position).isModuleSelected());
 
-                        JSONObject jsonModulesName = new JSONObject();
-                        JSONObject jsonModules = new JSONObject();
-                        JSONObject jsonObject = new JSONObject();
-                        try {
 
-                            jsonObject.put("name", moduleName);
-                            jsonObject.put("status", moduleStatus);
-                            jsonModules.put("1", jsonObject);
-                            jsonModulesName.put("modules", jsonModules);
-                        } catch (JSONException je) {
+                        if (moduleName.equals("Payroll")||moduleName.equals("Library")||moduleName.equals("Notifications")
+                                ||moduleName.equals("Timeline")||moduleName.equals("Chat")||moduleName.equals("Gallery")
+                                ||moduleName.equals("Newsletters")||moduleName.equals("Visitors")||moduleName.equals("Transport")
+                                ||moduleName.equals("Canteen")||moduleName.equals("Remainder Alerts")) {
 
+                            moduleStatus = String.valueOf(arrayList.get(position).isModuleSelected());
+
+                            System.out.println("moduleName***"+moduleName+"**"+isChecked);
+                            if (isChecked) {
+                                moduleStatus = "true";
+                                Toast.makeText(mContext, "aa", Toast.LENGTH_SHORT).show();
+                                holder.check_box.setBackgroundColor(Color.parseColor("#72d548"));
+                                holder.check_box.setTextColor(Color.WHITE);
+                                updateAPI(moduleName,moduleStatus);
+                            }
+                            else  {
+                                moduleStatus = "false";
+                                Toast.makeText(mContext, "aabb", Toast.LENGTH_SHORT).show();
+                                holder.check_box.setBackgroundColor(Color.WHITE);
+                                holder.check_box.setTextColor(Color.BLACK);
+                                updateAPI(moduleName,moduleStatus);
+                            }
                         }
-
-                        moduleStatusUpdate(jsonModulesName);
+                        else {
+                            Toast.makeText(mContext,"aacc", Toast.LENGTH_SHORT).show();
+                            moduleStatus="true";
+                            holder.check_box.setBackgroundColor(Color.YELLOW);
+                            holder.check_box.setTextColor(Color.BLACK);
+                            updateAPI(moduleName,moduleStatus);
+                        }
                     }
                 });
 
@@ -223,7 +225,7 @@ public class SelectModuleAdapter extends RecyclerView.Adapter<SelectModuleViewHo
                                             if (response.isSuccessful()) {
                                                 checkedArrayList.clear();
                                                 Log.i("SELECT_MODULE", "" + response.body());
-                                                Intent intent = new Intent(mContext, AddWingsActivity.class);
+                                                Intent intent = new Intent(mContext, DashboardActivity.class);
                                                 mContext.startActivity(intent);
                                             } else {
                                                 Toast.makeText(mContext, "Select the module ", Toast.LENGTH_SHORT).show();
@@ -314,20 +316,11 @@ public class SelectModuleAdapter extends RecyclerView.Adapter<SelectModuleViewHo
                         checkedArrayList.add(arrayList.get(position).getModuleNAme());
                     }
                 }else {
-
                     holder.check_box.setBackgroundColor(Color.YELLOW);
                     holder.check_box.setTextColor(Color.BLACK);
                     checkedArrayList.add(arrayList.get(position).getModuleNAme());
                 }
-              /*  if (flag) {
-                    holder.check_box.setBackgroundColor(Color.parseColor("#72d548"));
-                    holder.check_box.setTextColor(Color.WHITE);
-                    checkedArrayList.add(arrayList.get(position).getModuleNAme());
-                } else {
-                    holder.check_box.setBackgroundColor(Color.WHITE);
-                    holder.check_box.setTextColor(Color.BLACK);
-                    checkedArrayList.remove(arrayList.get(position).getModuleNAme());
-                }*/
+
 
                 holder.check_box.setChecked(flag);
                 holder.check_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -367,34 +360,6 @@ public class SelectModuleAdapter extends RecyclerView.Adapter<SelectModuleViewHo
                             holder.check_box.setTextColor(Color.BLACK);
                             updateAPI(moduleName,moduleStatus);
                         }
-
-                       /* if (!adapterPojoClass.isModuleSelected()) {
-                            checkedArrayList.add(holder.check_box.getText().toString());
-                            adapterPojoClass.setModuleSelected(true);
-                            //holder.check_box.setBackgroundColor(Color.RED);
-                            holder.check_box.setBackgroundColor(Color.parseColor("#72d548"));
-                            holder.check_box.setTextColor(Color.WHITE);
-                        } else {
-                            checkedArrayList.remove(holder.check_box.getText().toString());
-                            adapterPojoClass.setModuleSelected(false);
-                            //holder.check_box.setBackgroundColor(Color.parseColor("#72d548"));
-                            holder.check_box.setBackgroundColor(Color.WHITE);
-                            holder.check_box.setTextColor(Color.BLACK);
-                        }
-*/
-
-                        JSONObject jsonModulesName = new JSONObject();
-                        JSONObject jsonModules = new JSONObject();
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("name", moduleName);
-                            jsonObject.put("status", moduleStatus);
-                            jsonModules.put("1", jsonObject);
-                            jsonModulesName.put("modules", jsonModules);
-                        } catch (JSONException je) { }
-System.out.println("jsonModulesName****"+jsonModulesName);
-                  //      moduleStatusUpdate(jsonModulesName);
-
                     }
                 });
                 btn_Save.setOnClickListener(new View.OnClickListener() {
