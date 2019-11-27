@@ -62,6 +62,8 @@ public class ClassSectionAdapter extends RecyclerView.Adapter<ClassViewHolder> {
         this.context = context;
         this.recyclerTag = recyclerTag;
         this.modelArrayList = modelArrayList;
+
+        mApiService = ApiUtils.getAPIService();
     }
 
 
@@ -284,6 +286,7 @@ public class ClassSectionAdapter extends RecyclerView.Adapter<ClassViewHolder> {
 
                         Log.d("OBJECT_ARR", obj.toString());
                         Log.d("OBJECT_ARR", objClass.toString());
+                        Log.d("OBJECT_ARR", ""+objClass);
                         Log.d("OBJECT_ARR", Constant.SCHOOL_ID);
                         Log.d("OBJECT_ARR",     Constant.DIVISION_NAME);
                         Log.d("OBJECT_ARR", Constant.EMPLOYEE_BY_ID);

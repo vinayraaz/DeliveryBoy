@@ -26,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import in.varadhismartek.Utils.Constant;
 import in.varadhismartek.patashalaerp.DivisionModule.AddDivisionActivity;
@@ -202,8 +203,8 @@ public class AddSectionFragment extends Fragment implements View.OnClickListener
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
                 Log.i("CLASS_SECTION", "" + response.body());
-                setSpinnerForClass();
-               /* if (response.isSuccessful()) {
+
+                if (response.isSuccessful()) {
                     try {
 
                         JSONObject object = new JSONObject(new Gson().toJson(response.body()));
@@ -235,9 +236,9 @@ public class AddSectionFragment extends Fragment implements View.OnClickListener
                                 spn_class.setAdapter(customSpinnerAdapter);
 
 
-                               *//* modelArrayList.add(new ClassSectionModel(className, sectionClist));
+                               /* modelArrayList.add(new ClassSectionModel(className, sectionClist));
                                 System.out.println("sectionClist**"+className+"***"+sectionClist+"***"+modelArrayList);
-                                setRecyclerView();*//*
+                                setRecyclerView();*/
                             }
 
                         }
@@ -255,8 +256,9 @@ public class AddSectionFragment extends Fragment implements View.OnClickListener
                     } else if (String.valueOf(response.code()).equals("409")) {
                         Toast.makeText(getActivity(), "No Record", Toast.LENGTH_SHORT).show();
                     }
+
                     setSpinnerForClass();// no data in getsectionAOI
-                }*/
+                }
             }
 
             @Override
