@@ -1,9 +1,8 @@
-package in.varadhismartek.patashalaerp.ClassAndSection;
+package com.deliveryboy.ClassAndSection;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,14 +12,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import in.varadhismartek.Utils.Constant;
 import in.varadhismartek.patashalaerp.DivisionModule.ClassSectionAndDivisionModel;
@@ -34,13 +30,13 @@ import retrofit2.Response;
 public class ClassSectionAdapter extends RecyclerView.Adapter<ClassViewHolder> {
     Context context;
     private ArrayList<ClassSectionAndDivisionModel> arrayList,newarrayList;
-    private  ArrayList<ClassSectionModel> modelArrayList;
+    private ArrayList<ClassSectionModel> modelArrayList;
     private ArrayList<String> list;
     private ImageView ivSendClass, iv_sendAddSubmit;
     private ArrayList<String> checkedArrayList;
     private ArrayList<String> uncheckedArrayList;
     private String recyclerTag;
-    private  Button buttonAdd;
+    private Button buttonAdd;
     private ArrayList<DivisionClassModel> divisionClassModels;
     private APIService mApiService;
 
@@ -261,7 +257,7 @@ public class ClassSectionAdapter extends RecyclerView.Adapter<ClassViewHolder> {
                     @Override
                     public void onClick(View v) {
 
-                        Toast.makeText(context,"Delete",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,"Delete", Toast.LENGTH_SHORT).show();
                         String classValue="";
                         JSONArray array = new JSONArray();
                         for (int p=0;p<modelArrayList.size();p++){

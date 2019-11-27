@@ -1,4 +1,4 @@
-package in.varadhismartek.patashalaerp.ClassAndSection;
+package com.deliveryboy.ClassAndSection;
 
 
 import android.content.Context;
@@ -20,15 +20,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import in.varadhismartek.Utils.Constant;
 import in.varadhismartek.patashalaerp.DivisionModule.AddDivisionActivity;

@@ -1,4 +1,4 @@
-package in.varadhismartek.patashalaerp.ClassAndSection;
+package com.deliveryboy.ClassAndSection;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
