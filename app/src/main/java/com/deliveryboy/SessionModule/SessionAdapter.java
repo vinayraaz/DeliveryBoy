@@ -1,10 +1,9 @@
-package in.varadhismartek.patashalaerp.SessionModule;
+package com.deliveryboy.SessionModule;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -154,7 +153,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionViewHolder> {
                 holder.linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        Toast.makeText(mContext,"Click"+position,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext,"Click"+position, Toast.LENGTH_SHORT).show();
                         String StartDate, EndDate, fromDate, toDate, serialNo, addempid;
                         StartDate = modelList.get(position).getStartDate();
                         EndDate = modelList.get(position).getEndDate();

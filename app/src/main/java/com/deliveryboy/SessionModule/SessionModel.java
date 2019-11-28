@@ -1,4 +1,4 @@
-package in.varadhismartek.patashalaerp.SessionModule;
+package com.deliveryboy.SessionModule;
 
 public class SessionModel {
 

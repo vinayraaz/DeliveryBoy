@@ -1,4 +1,4 @@
-package in.varadhismartek.patashalaerp.Retrofit;
+package com.deliveryboy.SessionModule;
 
 
 import org.json.JSONArray;
@@ -172,7 +172,7 @@ public interface APIService {
                                    @Field("transport_facility") String transport_facility,
                                    @Field("no_of_guardians") String no_of_guardians,
                                    @Field("updated_employee_id") String updated_employee_id
-                                   );
+    );
 
     @FormUrlEncoded
     @POST("get_school_student_barrier")
@@ -243,7 +243,7 @@ public interface APIService {
             @Field("module_name") String module_name,
             @Field("added_employeeid") String added_employeeid,
             @Field("makers") JSONObject maker,
-            @Field("checkers") JSONObject  checkers
+            @Field("checkers") JSONObject checkers
     );
 
     @FormUrlEncoded
@@ -276,9 +276,9 @@ public interface APIService {
     @POST("add_classes_sections")
     Call<Object> addClassSections(
             @Field("school_id") String school_id,
-            @Field("division_name") String  division,
-            @Field("classes_sections") JSONObject  classSection,
-            @Field("added_employeeid") String  employeeID
+            @Field("division_name") String division,
+            @Field("classes_sections") JSONObject classSection,
+            @Field("added_employeeid") String employeeID
     );
 
 
@@ -286,8 +286,8 @@ public interface APIService {
     @POST("del_classes_sections")
     Call<Object> deleteClassSections(
             @Field("school_id") String school_id,
-            @Field("classes_sections") JSONObject  classSection,
-            @Field("deleting_employeeid") String  employeeID
+            @Field("classes_sections") JSONObject classSection,
+            @Field("deleting_employeeid") String employeeID
     );
 
     //sessions
@@ -295,11 +295,11 @@ public interface APIService {
     @POST("add_school_sessions")
     Call<Object> addSession(
             @Field("school_id") String school_id,
-            @Field("academic_start_date") String  fdate,
-            @Field("academic_end_date") String  todate,
-            @Field("weekly_working_days") String  workingday,
-            @Field("sessions") JSONObject  sessions,
-            @Field("added_employeeid") String  empID
+            @Field("academic_start_date") String fdate,
+            @Field("academic_end_date") String todate,
+            @Field("weekly_working_days") String workingday,
+            @Field("sessions") JSONObject sessions,
+            @Field("added_employeeid") String empID
     );
 
     @FormUrlEncoded
@@ -312,32 +312,32 @@ public interface APIService {
     @POST("get_school_sessions")
     Call<Object> getSessions(
             @Field("school_id") String school_id,
-             @Field("academic_start_date") String  startDate,
-            @Field("academic_end_date") String  toDate
+            @Field("academic_start_date") String startDate,
+            @Field("academic_end_date") String toDate
     );
 
     @FormUrlEncoded
     @POST("delete_school_sessions")
     Call<Object> deleteSessions(
             @Field("school_id") String school_id,
-            @Field("academic_start_date") String  startDate,
-            @Field("academic_end_date") String  endDate,
-            @Field("session_serial_no") String  serialNo,
-            @Field("added_employeeid") String  empId,
-            @Field("session_from_date") String  fromdate,
-            @Field("session_to_date") String  todate
+            @Field("academic_start_date") String startDate,
+            @Field("academic_end_date") String endDate,
+            @Field("session_serial_no") String serialNo,
+            @Field("added_employeeid") String empId,
+            @Field("session_from_date") String fromdate,
+            @Field("session_to_date") String todate
     );
 
     @FormUrlEncoded
     @POST("update_school_sessions")
     Call<Object> upDateSession(
             @Field("school_id") String school_id,
-            @Field("academic_start_date") String  startDate,
-            @Field("academic_end_date") String  endDate,
-            @Field("weekly_working_days") String  workday,
-            @Field("added_employeeid") String  empId,
-            @Field("session_from_date") String  fromdate,
-            @Field("session_to_date") String  todate
+            @Field("academic_start_date") String startDate,
+            @Field("academic_end_date") String endDate,
+            @Field("weekly_working_days") String workday,
+            @Field("added_employeeid") String empId,
+            @Field("session_from_date") String fromdate,
+            @Field("session_to_date") String todate
     );
 
 
