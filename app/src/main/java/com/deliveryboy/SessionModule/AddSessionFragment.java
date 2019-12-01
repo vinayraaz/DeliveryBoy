@@ -1,7 +1,9 @@
 package com.deliveryboy.SessionModule;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,9 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -38,10 +43,10 @@ import java.util.List;
 import java.util.Locale;
 
 import in.varadhismartek.Utils.Constant;
+import in.varadhismartek.patashalaerp.AdmissionBarriers.AdmissionBarriersActivity;
 import in.varadhismartek.patashalaerp.GeneralClass.CustomSpinnerAdapter;
 import in.varadhismartek.patashalaerp.R;
-import in.varadhismartek.patashalaerp.Retrofit.APIService;
-import in.varadhismartek.patashalaerp.Retrofit.ApiUtils;
+import in.varadhismartek.patashalaerp.Retrofit.ApiUtilsPatashala;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,7 +54,7 @@ import retrofit2.Response;
 import static android.support.constraint.Constraints.TAG;
 
 public class AddSessionFragment extends Fragment implements View.OnClickListener {
-    private ImageView iv_backBtn;
+    private ImageView iv_backBtn, ivNext;
     private TextView tv_fromDate, tv_toDate;
     private RelativeLayout rl_fromDate, rl_toDate;
     private Button bt_add, bt_submit;
@@ -59,17 +64,26 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
     ImageView iv_down, iv_up;
     LinearLayout ll_showHide, ll_NoOfSession;
 
-    SimpleDateFormat simpleDate;
 
     private int year, month, date, rowNumber = 1;
-    private String currentDate, str_sessionName = "", str_from_date, str_toDate, startYear = "", endYear = "";
-    ArrayList<String> sessionList, spinnerList;
+    private String currentDate, str_sessionName = "", strSelectSession = "", str_from_date, str_toDate,
+            startYear = "", endYear = "", sDate = "", eDate = "";
+    ArrayList<String> sessionList, spinnerList, spinnerDateList;
     ArrayList<Integer> list;
     CardView cardView;
     APIService apiService;
     List<SessionModel> modelList = new ArrayList<>();
-    String StartDate, EndDate, added_employeeid, added_employee_name, to_date, from_date, session_serial_no;
+    String res_to_date, res_from_date;
+    String SubtoDate, SubfromDate;
+    boolean b = true;
+    EditText edWorkDay;
+    Date date1, date2;
 
+    public AddSessionFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
     }
@@ -78,17 +92,24 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_session, container, false);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
 
         initViews(view);
         initListeners();
         getAcademicYear();
         return view;
+
+
     }
 
 
     private void initViews(View view) {
-        apiService = ApiUtils.getAPIServicePatashala();
+        apiService = ApiUtilsPatashala.getService();
+
+        edWorkDay = view.findViewById(R.id.workday);
         iv_backBtn = view.findViewById(R.id.iv_backBtn);
+        ivNext = view.findViewById(R.id.btnNext);
         tv_fromDate = view.findViewById(R.id.tv_fromDate);
         tv_toDate = view.findViewById(R.id.tv_toDate);
         spinner = view.findViewById(R.id.spinnerForSession);
@@ -109,15 +130,32 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
         iv_up = view.findViewById(R.id.iv_up);
         ll_showHide = view.findViewById(R.id.ll_showHide);
         ll_NoOfSession = view.findViewById(R.id.ll_NoOfSession);
-        //cardView.setVisibility(View.GONE);
+//        cardView.setVisibility(View.GONE);
 
         sessionList = new ArrayList<>();
         spinnerList = new ArrayList<>();
+        spinnerDateList = new ArrayList<>();
 
-        spinnerList.add(0, "Select Academic Year");
         list = new ArrayList<>();
+        modelList = new ArrayList<>();
+        modelList.clear();
         list.add(0, 1);
+        // modelList.add(0, 1);
 
+
+        Calendar calendar = Calendar.getInstance();
+
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        date = calendar.get(Calendar.DAY_OF_MONTH);
+
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat simpleDate = new SimpleDateFormat("dd-MM-yyyy");
+        currentDate = simpleDate.format(calendar.getTime());
+
+
+        modelList.add(new SessionModel(Constant.EMPLOYEE_BY_ID, Constant.POC_NAME,
+                tv_noSession.getText().toString(), SubfromDate, SubtoDate, currentDate, currentDate));
 
     }
 
@@ -129,6 +167,7 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
         bt_submit.setOnClickListener(this);
         tv_minus.setOnClickListener(this);
         tv_plus.setOnClickListener(this);
+        ivNext.setOnClickListener(this);
     }
 
     @Override
@@ -144,117 +183,168 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
                 toDatePickerDialog();
                 break;
             case R.id.bt_add:
-               /* if (startYear.equals("") || endYear.equals("")) {
-                    Toast.makeText(getActivity(), "Please Select Academics Years", Toast.LENGTH_SHORT).show();
 
-                }*/
                 if (tv_fromDate.getText().toString().equals("From Date") || tv_toDate.getText().toString().equals("To Date")) {
-                    Toast.makeText(getActivity(), "Please Select From and To Dates", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please Select From & To date", Toast.LENGTH_SHORT).show();
+                } else if (date2.after(date1)) {
+                    Toast.makeText(getActivity(), "To Date greater than From Date ", Toast.LENGTH_SHORT).show();
+                } else if (edWorkDay.getText().toString().isEmpty() || edWorkDay.getText().toString().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter working day", Toast.LENGTH_SHORT).show();
+                } else {
 
-                }
-               else {
 
-                    //String selectSession = startYear + " - " + endYear;
-                    String selectSession = tv_fromDate.getText().toString() + " - " + tv_toDate.getText().toString();
+                    String selectedDate = str_from_date + " - " + str_toDate;
+                    String selectedYear = startYear + " - " + endYear;
 
-                    sessionList.add(selectSession);
-                    spinnerList.add(selectSession);
-                    setSpinner();
+                    spinnerList.add(selectedYear);
+                     spinnerDateList.add(selectedDate);
+
+                      setSpinner();
                     tv_fromDate.setText("From Date");
                     tv_toDate.setText("To Date");
                     Toast.makeText(getActivity(), "Date Added Successfully", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.tv_plus:
-                Log.d("BUTTON*****3+", String.valueOf(rowNumber));
+                if (spinner.getSelectedItemPosition() == 0) {
+                    Toast.makeText(getActivity(), "Select Academic Year", Toast.LENGTH_SHORT).show();
+                } else {
 
-                if (rowNumber < 4) {
-                    rowNumber = Integer.parseInt(tv_noSession.getText().toString());
-                    rowNumber++;
-                    tv_noSession.setText(String.valueOf(rowNumber));
-                    Log.d("BUTTON****4+-", String.valueOf(rowNumber));
+                    if (rowNumber < 4) {
+                        rowNumber = Integer.parseInt(tv_noSession.getText().toString());
+                        rowNumber++;
+                        tv_noSession.setText(String.valueOf(rowNumber));
+                        Log.d("BUTTON****4+-", String.valueOf(rowNumber));
+                        Gson gson = new Gson();
+                        String fromSessionDate = "", newFromSessDate1 = "", newFromSessDate2 = "",
+                                lastSessionDate = "", SesStartDate = "", SesEndstDate = "";
 
 
-                    modelList.add(new SessionModel(added_employeeid, added_employee_name, to_date,
-                            session_serial_no, from_date, StartDate, EndDate));
-                    SessionAdapter adapter = new SessionAdapter(modelList, getActivity(), Constant.RV_SESSION_ROW);
-                    recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    recycler_view.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                   /* list.add(1);
-                    SessionAdapter adapter = new SessionAdapter(getActivity(), list, Constant.RV_SESSION_ROW);
-                    recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    recycler_view.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();*/
+                        fromSessionDate = String.valueOf(modelList.get(modelList.size() - 1).getAcd_from_date());
+
+                        lastSessionDate = String.valueOf(modelList.get(modelList.size() - 1).getAcd_to_date());
+
+                        SesStartDate = String.valueOf(modelList.get(modelList.size() - 1).getRespStartDate());
+
+                        SesEndstDate = String.valueOf(modelList.get(modelList.size() - 1).getRespEndDate());
+
+                        Log.d("BUTTON****date", "" + lastSessionDate + "**" + SesStartDate + "**" + SesEndstDate);
+
+
+                        //if (b) {
+                        //   b = false;
+                        modelList.remove(modelList.size() - 1);
+                        try {
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                            Calendar c = Calendar.getInstance();
+                            c.setTime(sdf.parse(SesStartDate));
+                            c.add(Calendar.DATE, 1);
+                            newFromSessDate1 = sdf.format(c.getTime());  // dt is now the new date
+                            Log.d("ChangeDate***1**", "" + newFromSessDate1);
+
+                            modelList.add(new SessionModel(Constant.EMPLOYEE_BY_ID, Constant.POC_NAME,
+                                    tv_noSession.getText().toString(), SubfromDate, SubtoDate, SesStartDate, newFromSessDate1));
+
+                            c.setTime(sdf.parse(newFromSessDate1));
+                            c.add(Calendar.DATE, 1);
+                            newFromSessDate2 = sdf.format(c.getTime());
+                            Log.d("ChangeDate***12**", "" + newFromSessDate2);
+
+                            modelList.add(new SessionModel(Constant.EMPLOYEE_BY_ID, Constant.POC_NAME,
+                                    tv_noSession.getText().toString(), SubfromDate, SubtoDate, newFromSessDate2, SesEndstDate));
+
+
+                        } catch (ParseException pe) {
+
+                        }
+
+
+                        list.add(1);
+                        SessionAdapter adapter = new SessionAdapter(modelList, getActivity(), Constant.RV_SESSION_ROW);
+                        // SessionAdapter adapter = new SessionAdapter(getActivity(),list, Constant.RV_SESSION_ROW);
+                        recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        recycler_view.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+
+
+                    }
                 }
                 break;
             case R.id.tv_minus:
-                Log.d("BUTTON*****1-", String.valueOf(rowNumber));
-
+                Log.d("BUTTON****2-", String.valueOf(rowNumber));
+                rowNumber = Integer.parseInt(tv_noSession.getText().toString());
                 if (rowNumber > 1) {
-                    rowNumber = Integer.parseInt(tv_noSession.getText().toString());
+
+                    Log.d("BUTTON****2-A", String.valueOf(rowNumber));
+                    Log.d("BUTTON****2-A", ""+modelList.size());
+
+                    String mLastRowStartDate = "",mLastRowEndDate="",mSLastRowStartDate="",mSLastRowEndDate="";
+                    mLastRowEndDate = modelList.get(modelList.size()-1).getRespEndDate();
+                    mSLastRowStartDate = modelList.get(modelList.size()-2).getRespStartDate();
+                    mSLastRowEndDate = modelList.get(modelList.size()-2).getRespEndDate();
+                    Log.d("BUTTON****2-B", ""+mSLastRowStartDate+"**"+mSLastRowEndDate+"****"+mLastRowEndDate);
+                    Log.d("BUTTON****2-B", ""+modelList.size());
+
                     rowNumber--;
                     tv_noSession.setText(String.valueOf(rowNumber));
-                    Log.d("BUTTON****2-", String.valueOf(rowNumber));
+                    modelList.remove(modelList.size() - 1);
+                    modelList.remove(modelList.size() - 1);
+                    modelList.add(new SessionModel(Constant.EMPLOYEE_BY_ID,Constant.POC_NAME,tv_noSession.getText().toString(),
+                            SubfromDate, SubtoDate,mSLastRowStartDate,mLastRowEndDate));
+
+
 
                     SessionAdapter adapter = new SessionAdapter(modelList, getActivity(), Constant.RV_SESSION_ROW);
                     recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
                     recycler_view.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
-                    modelList.remove(rowNumber - 1);
-                  /*  list.remove(rowNumber - 1);
-                    SessionAdapter adapter = new SessionAdapter(getActivity(), list, Constant.RV_SESSION_ROW);
-                    recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    recycler_view.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();*/
+
+
                 }
                 break;
             case R.id.bt_submit:
+                if (tv_fromDate.getText().toString().equals("From Date") || tv_toDate.getText().toString().equals("To Date")) {
+                    Toast.makeText(getActivity(), "Please Select From & To date", Toast.LENGTH_SHORT).show();
+                } else if (date2.after(date1)) {
+                    Toast.makeText(getActivity(), "To Date greater than From Date ", Toast.LENGTH_SHORT).show();
+                } else if (edWorkDay.getText().toString().isEmpty() || edWorkDay.getText().toString().length() == 0) {
+                    Toast.makeText(getActivity(), "Please enter working day", Toast.LENGTH_SHORT).show();
+                } else {
+                    JSONObject sessionObject = new JSONObject();
+                    JSONObject mainObject = new JSONObject();
+                    Gson gson = new Gson();
 
-                JSONObject sessionObject = new JSONObject();
-                JSONObject mainObject = new JSONObject();
-                System.out.println("M****+" + modelList.size());
-                for (int i = 0; i < modelList.size(); i++) {
-                    String strFromDate = modelList.get(i).getFrom_date();
-                    String strToDate = modelList.get(i).getTo_date();
+                    System.out.println("M****+" + gson.toJson(modelList));
+                    for (int i = 0; i < modelList.size(); i++) {
+                        String strFromDate = modelList.get(i).getRespStartDate();
+                        String strToDate = modelList.get(i).getRespEndDate();
 
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        jsonObject.put("from_date", strFromDate);
-                        jsonObject.put("to_date", strToDate);
-                        mainObject.put(String.valueOf(i + 1), jsonObject);
-                        sessionObject.put("session", mainObject);
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("from_date", strFromDate);
+                            jsonObject.put("to_date", strToDate);
+                            mainObject.put(String.valueOf(i + 1), jsonObject);
+                            sessionObject.put("session", mainObject);
 
-                    } catch (JSONException je) {
+                        } catch (JSONException je) {
+
+                        }
 
                     }
 
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    System.out.println("M****+" + sessionObject);
+                    addSessionAPI(sessionObject);
+
                 }
 
-                if (tv_fromDate.getText().toString().equals("From DateF") || tv_toDate.getText().toString().equals("To Date")) {
-                    Toast.makeText(getActivity(), "Please Select date", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.btnNext:
 
-                }
-                apiService.addSession(Constant.SCHOOL_ID, tv_fromDate.getText().toString(), tv_toDate.getText().toString(),
-                        "5", sessionObject, Constant.EMPLOYEE_BY_ID)
-                        .enqueue(new Callback<Object>() {
-                            @Override
-                            public void onResponse(Call<Object> call, Response<Object> response) {
-                                Log.d(TAG, "onResponse: ADDSession" + response.body());
-                            }
-
-                            @Override
-                            public void onFailure(Call<Object> call, Throwable t) {
-
-                            }
-                        });
-
-                /*Intent intent = new Intent(getActivity(), AdmissionBarriersActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
+                Intent intent = new Intent(getActivity(), AdmissionBarriersActivity.class);
                 getActivity().startActivity(intent);
-                getActivity().finish();*/
-
 
                 break;
 
@@ -262,15 +352,53 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
 
     }
 
+    private void addSessionAPI(JSONObject sessionObject) {
+        apiService.addSession(Constant.SCHOOL_ID, str_from_date, str_toDate, edWorkDay.getText().toString(),
+                sessionObject, Constant.EMPLOYEE_BY_ID).enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                Log.i("SESSION_RESS", "" + response.body());
+                Log.i("SESSION_RESS", "" + response.code());
+                if (response.isSuccessful()) {
+                    Toast.makeText(getActivity(), "Session have save successfully ", Toast.LENGTH_SHORT).show();
+                    spinner.setSelection(0);
+                    tv_fromDate.setText("");
+                    tv_toDate.setText("");
+                    edWorkDay.setText("");
+                    getAcademicYear();
+
+
+                } else {
+                    if ((String.valueOf(response.code()).equals("400")) || (String.valueOf(response.code()).equals("400"))) {
+                        Toast.makeText(getActivity(), "Already exist ", Toast.LENGTH_SHORT).show();
+                        spinner.setSelection(0);
+                        tv_fromDate.setText("");
+                        tv_toDate.setText("");
+                        edWorkDay.setText("");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+
+            }
+        });
+    }
+
     private void getAcademicYear() {
         spinnerList.clear();
+        spinnerDateList.clear();
+
+        spinnerList.add(0, "Select Academic Year");
+        spinnerDateList.add(0, "Select Academic Year");
         apiService.getAcademicYear(Constant.SCHOOL_ID).enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
                 Log.d("SESSION**AYEAR", "onResponse: " + response.body());
+                Log.d("SESSION**AYEAR", "onResponse: " + response.code());
 
                 if (response.isSuccessful()) {
-                    Log.i("DIVISION**GET", "" + response.body());
                     try {
                         JSONObject object = new JSONObject(new Gson().toJson(response.body()));
                         String status = (String) object.get("status");
@@ -283,23 +411,29 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
                             while (keys.hasNext()) {
                                 String key = keys.next();
                                 JSONObject jsonObjectValue = jsonObject2.getJSONObject(key);
-                                String startDate = jsonObjectValue.getString("start_date");
-                                String endDate = jsonObjectValue.getString("end_date");
+                                String resStartDate = jsonObjectValue.getString("start_date");
+                                String resEndDate = jsonObjectValue.getString("end_date");
 
 
                                 SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
                                 SimpleDateFormat formatterDate = new SimpleDateFormat("dd-MM-yyyy");
                                 SimpleDateFormat formatterYear = new SimpleDateFormat("yyyy");
-                                try {
-                                    Date fromYear = formater.parse(startDate);
-                                    Date toYear = formater.parse(endDate);
 
-                                    startYear = formatterDate.format(fromYear);
-                                    endYear = formatterDate.format(toYear);
+                                try {
+                                    Date fromYear = formater.parse(resStartDate);
+                                    Date toYear = formater.parse(resEndDate);
+
+                                    sDate = formatterDate.format(fromYear);
+                                    eDate = formatterDate.format(toYear);
+
+                                    startYear = formatterYear.format(fromYear);
+                                    endYear = formatterYear.format(toYear);
+
+                                    String selectedDate = sDate + " - " + eDate;
                                     String selectedYear = startYear + " - " + endYear;
 
                                     spinnerList.add(selectedYear);
-                                    setSpinner();
+                                    spinnerDateList.add(selectedDate);
 
                                 } catch (ParseException e) {
                                     e.printStackTrace();
@@ -307,6 +441,8 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
 
 
                             }
+                            setSpinner();
+
 
                         }
                     } catch (JSONException je) {
@@ -329,20 +465,30 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
                 if (spinner.getSelectedItemPosition() != 0) {
+                    b = true;
                     rowNumber = 1;
                     tv_noSession.setText(String.valueOf(rowNumber));
                     list.clear();
-
+                    edWorkDay.setText("");
+                    modelList.clear();
                     list.add(0, 1);
 
+
+                    int pos = adapterView.getSelectedItemPosition();
+                    System.out.println("str_sessionName**1**" + spinnerDateList.get(pos));
+
+
+                    strSelectSession = spinnerDateList.get(pos);
                     str_sessionName = spinner.getSelectedItem().toString();
                     tvSessionName.setText(str_sessionName);
 
-                    //setRecyclerView();
-                    getSchoolSession(str_sessionName);
+                    getSchoolSession(strSelectSession);
 
 
+                }
+                else {
                 }
             }
 
@@ -353,18 +499,17 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
         });
     }
 
-    private void getSchoolSession(String str_sessionName) {
-        modelList.clear();
-        EndDate = str_sessionName.substring(13);
-        StartDate = str_sessionName.substring(0, Math.min(str_sessionName.length(), 10));
-        System.out.println("str_sessionName***" + str_sessionName + "**" + StartDate + "**" + EndDate);
-        apiService.getSessions(Constant.SCHOOL_ID, StartDate, EndDate).enqueue(new Callback<Object>() {
+    private void getSchoolSession(String strSelectSession) {
+
+        SubtoDate = strSelectSession.substring(13);
+        SubfromDate = strSelectSession.substring(0, Math.min(strSelectSession.length(), 10));
+        Log.d(TAG, "onResponse:getsession " + SubfromDate + "***" + SubtoDate);
+
+        apiService.getSessions(Constant.SCHOOL_ID, SubfromDate, SubtoDate).enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
-                Log.d(TAG, "onResponse:getsession " + response.code());
                 Log.d(TAG, "onResponse:getsession " + response.body());
-
-
+                Gson gson = new Gson();
                 if (response.isSuccessful()) {
                     try {
                         JSONObject object = new JSONObject(new Gson().toJson(response.body()));
@@ -380,53 +525,46 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
                                 JSONObject jsonObjectValue = jsonObject2.getJSONObject(key);
 
 
-                                added_employeeid = jsonObjectValue.getString("added_employeeid");
-                                added_employee_name = jsonObjectValue.getString("added_employee_name");
-                                to_date = jsonObjectValue.getString("to_date");
-                                from_date = jsonObjectValue.getString("from_date");
-                                session_serial_no = jsonObjectValue.getString("session_serial_no");
+                                String added_employeeid = jsonObjectValue.getString("added_employeeid");
+                                String added_employee_name = jsonObjectValue.getString("added_employee_name");
+                                res_to_date = jsonObjectValue.getString("to_date");
+                                res_from_date = jsonObjectValue.getString("from_date");
+                                String session_serial_no = jsonObjectValue.getString("session_serial_no");
 
-
-                                modelList.add(new SessionModel(added_employeeid, added_employee_name, to_date,
-                                        session_serial_no, from_date, StartDate, EndDate));
-
+                                edWorkDay.setText(session_serial_no);
+                                modelList.add(new SessionModel(added_employeeid, added_employee_name,
+                                        session_serial_no, SubfromDate, SubtoDate, res_from_date, res_to_date));
 
                             }
-                            System.out.println("modelList*****" + modelList.size());
+
+                            tv_noSession.setText(String.valueOf(modelList.size()));
+                            SessionAdapter adapter = new SessionAdapter(modelList, getActivity(), Constant.RV_SESSION_ROW);
+                            recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
+                            recycler_view.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
                         }
-                        tv_noSession.setText(String.valueOf(modelList.size()));
+                    } catch (JSONException je) {
+
+                    }
+                } else {
+                    if ((String.valueOf(response.code()).equals("404"))) {
+                        tv_noSession.setText("1");
+
+                        modelList.add(new SessionModel(Constant.EMPLOYEE_BY_ID, Constant.POC_NAME,
+                                tv_noSession.getText().toString(), SubfromDate, SubtoDate, str_from_date, str_toDate));
+
                         SessionAdapter adapter = new SessionAdapter(modelList, getActivity(), Constant.RV_SESSION_ROW);
                         recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
                         recycler_view.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
-
-                    } catch (JSONException je) {
-
-                    }
-                }
-                else {
-                    modelList.clear();
-
-                    Log.d(TAG, "onResponse:getsession " + modelList.size());
-                    if (String.valueOf(response.code()).equals("404") ||(String.valueOf(response.code()).equals("409"))){
-
-                        SessionAdapter adapter = new SessionAdapter(modelList,getActivity(), Constant.RV_SESSION_ROW_NODATA);
-                        recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recycler_view.setAdapter(adapter);
-                        adapter.notifyDataSetChanged();
-                    }else {
-                        SessionAdapter adapter = new SessionAdapter(modelList,getActivity(), Constant.RV_SESSION_ROW_NODATA);
-                        recycler_view.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recycler_view.setAdapter(adapter);
-                        adapter.notifyDataSetChanged();
+                    } else {
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-                Log.d(TAG, "onResponse:getsessionE " + t.toString());
-                modelList.clear();
+
             }
         });
 
@@ -450,7 +588,12 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
                     endYear = yearFormat.format(calendar.getTime());
                     str_toDate = simpleDateFormat.format(calendar.getTime());
                     Log.d("CHECK_DATE", str_toDate);
-
+                    date1 = new Date();
+                     try{
+                         date1 = simpleDateFormat.parse(str_toDate);
+                     } catch (ParseException e) {
+                         e.printStackTrace();
+                     }
 
                     tv_toDate.setText(str_toDate);
                 }
@@ -481,6 +624,14 @@ public class AddSessionFragment extends Fragment implements View.OnClickListener
                 Log.d("CHECK_DATE", str_from_date);
 
                 tv_fromDate.setText(str_from_date);
+                date2 = new Date();
+                try{
+                    date2 = simpleDateFormat.parse(str_from_date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+
             }
         }, year, month, date);
 
