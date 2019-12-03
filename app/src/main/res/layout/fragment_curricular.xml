@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Ll_both_match_heading"
+    android:background="@color/barrier_green_colorPrimaryDark"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar style="@style/Toolbar">
+
+        <ImageView
+            android:id="@+id/iv_backBtn"
+            style="@style/imgvw_normal"
+            android:layout_gravity="start"
+            android:contentDescription="@string/backgroung"
+            android:src="@drawable/ic_arrow_back_white_24dp" />
+
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/tv_normal"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/sp19" />
+
+
+        <ImageView
+            android:id="@+id/iv_sendAddWings"
+            style="@style/imgvw_normal"
+            android:layout_width="@dimen/dp25"
+            android:layout_height="@dimen/dp25"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/dp10"
+            android:contentDescription="@string/backgroung"
+            android:src="@drawable/ic_send_black_24dp" />
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginBottom="@dimen/dp0"
+        android:background="@drawable/card_design"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_design"
+                android:minHeight="@dimen/dp60"
+                android:orientation="horizontal">
+
+
+                <LinearLayout
+                    android:layout_width="@dimen/dp0"
+                    android:layout_height="@dimen/dp40"
+                    android:layout_marginRight="@dimen/dp5"
+                    android:layout_weight=".5"
+                    android:background="@drawable/spinnerbackground_two"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/edActivityName"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp35"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinnerbackground_two"
+                        android:hint="Activity Name"
+                        android:inputType="text"
+                        android:paddingStart="@dimen/dp10"
+                        android:textSize="@dimen/sp14"
+                        tools:ignore="Autofill,RtlSymmetry,TextFields" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="@dimen/dp0"
+                    android:layout_height="@dimen/dp40"
+                    android:layout_marginRight="@dimen/dp5"
+                    android:layout_weight=".5"
+                    android:background="@drawable/spinnerbackground_two"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/ed_marks"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp35"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinnerbackground_two"
+                        android:hint="Marks"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:paddingStart="@dimen/dp10"
+                        android:textSize="@dimen/sp14"
+                        tools:ignore="Autofill,RtlSymmetry,TextFields" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="@dimen/dp120"
+                android:layout_height="@dimen/dp40"
+                android:layout_gravity="right"
+                android:layout_margin="@dimen/dp10"
+                android:background="@drawable/image_backgroung"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvAdd"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Add"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
