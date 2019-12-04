@@ -437,31 +437,111 @@ public interface APIService {
             @Field("employee_uuid") String empId
     );
 
+    //exam barriers
+
 
     @FormUrlEncoded
-    @POST("add_co_curricular_activities")
-    Call<Object> addCurricular(
+    @POST("get-status-exam-barrier")
+    Call<Object> getExamBarriers(
             @Field("school_id") String school_id,
-            @Field("data") JSONObject exam_type,
-            @Field("added_employeeid") String empId
+            @Field("exam_type") String exam_type,
+            @Field("division") String division,
+            @Field("class") String classType
+    );
+
+
+    @FormUrlEncoded
+    @POST("add_exam_barrier")
+    Call<Object> addExamBarrier(
+            @Field("school_id") String school_id,
+            @Field("exam_type") String exam_type,
+            @Field("division") String division,
+            @Field("class") String classType,
+            @Field("subject") String subject,
+            @Field("min_marks") long min_marks,
+            @Field("max_marks") long max_marks,
+            @Field("exam_duration") String exam_duration,
+            @Field("added_by_uuid") String added_by_uuid
+
+    );
+
+// Add subject
+
+
+
+    @FormUrlEncoded
+    @POST("get_subjects")
+    Call<Object> getSubject(
+            @Field("school_id") String school_id,
+            @Field("division") String division,
+            @Field("class") String classType
     );
 
     @FormUrlEncoded
-    @POST("get-status-co-curricular-activities")
-    Call<Object> getCurricular(
+    @POST("add_subjects")
+    Call<Object> addSubject(
+            @Field("school_id") String school_id,
+            @Field("division") String division,
+            @Field("class") String classType,
+            @Field("data") JSONObject data,
+            @Field("employee_uuid") String employee_uuid
+
+    );
+
+
+
+    @FormUrlEncoded
+    @POST("update_subject")
+    Call<Object> updateSubject(
+            @Field("school_id") String school_id,
+            @Field("division") String division,
+            @Field("employee_uuid") String employee_uuid,
+            @Field("class") String classType,
+            @Field("sections") JSONArray data,
+            @Field("old_subject") String old_subject,
+            @Field("new_subject") String new_subject,
+            @Field("new_subject_code") String new_subject_code,
+            @Field("new_subject_type") String new_subject_type,
+            @Field("new_status") String new_status
+
+    );
+
+    //sports
+    @FormUrlEncoded
+    @POST("get_sports")
+    Call<Object>getSports(@Field("school_id") String school_id);
+
+    @FormUrlEncoded
+    @POST("add_sports")
+    Call<Object>addSports(
+            @Field("school_id") String school_id,
+            @Field("sports") JSONArray sports,
+            @Field("added_employeeid") String added_employeeid
+    );
+
+    @FormUrlEncoded
+    @POST("update_sports_name")
+    Call<Object>updateSportsByName(
+            @Field("school_id") String school_id,
+            @Field("added_employeeid") String empid,
+            @Field("old_sports_name") String old_sports_name,
+            @Field("new_sports_name") String new_sports_name
+    );
+
+    @FormUrlEncoded
+    @POST("update_sports_name")
+    Call<Object>updateSportsByStatus(
+            @Field("school_id") String school_id,
+            @Field("data") JSONObject datasports,
+            @Field("added_employeeid") String added_employeeid
+    );
+
+    @FormUrlEncoded
+    @POST("get_sports_barrier")
+    Call<Object>getSportBarriers(
             @Field("school_id") String school_id
     );
 
-    @FormUrlEncoded
-    @POST("update_co_curricular_activities")
-    Call<Object> updateCurricular(
-            @Field("school_id") String school_id,
-            @Field("added_employeeid") String added_employeeid,
-            @Field("old_activity_name") String old_activity_name,
-            @Field("new_activity_name") String new_activity_name,
-            @Field("new_marks") String new_marks,
-            @Field("new_status") String new_status
-    );
 }
 
 
