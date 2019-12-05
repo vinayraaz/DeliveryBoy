@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/barrier_green_colorPrimaryDark"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Toolbar"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:id="@+id/iv_backBtn"
+            style="@style/imgvw_normal"
+            android:layout_gravity="start"
+            android:contentDescription="@string/backgroung"
+            android:src="@drawable/ic_arrow_back_white_24dp" />
+
+
+        <TextView
+            style="@style/tv_normal"
+            android:layout_gravity="center"
+            android:text="Barrier"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/sp19" />
+
+
+        <ImageView
+            android:id="@+id/btnNext"
+            style="@style/imgvw_normal"
+            android:layout_width="@dimen/dp25"
+            android:layout_height="@dimen/dp25"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/dp10"
+            android:contentDescription="@string/backgroung"
+            android:src="@drawable/ic_send_black_24dp"
+            android:visibility="gone" />
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginBottom="@dimen/dp0"
+        android:background="@drawable/card_design">
+
+        <LinearLayout style="@style/Ll_both_match_heading">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/dp0"
+            android:background="@drawable/marks_bg">
+            <LinearLayout
+                style="@style/Ll_normal_htl"
+                android:background="@drawable/card_design"
+                android:padding="@dimen/dp5">
+
+                <Spinner
+                    android:id="@+id/spDivision"
+                    style="@style/spinner_weight"
+                    android:layout_margin="@dimen/dp5" />
+
+                <Spinner
+                    android:id="@+id/spClass"
+                    style="@style/spinner_weight"
+                    android:layout_margin="@dimen/dp5" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Ll_normal_htl"
+                android:background="@drawable/card_design"
+                android:padding="@dimen/dp5">
+
+                <LinearLayout
+                    android:layout_width="@dimen/dp0"
+                    android:layout_height="@dimen/dp40"
+                    android:layout_marginRight="@dimen/dp5"
+                    android:layout_weight=".5"
+                    android:orientation="vertical">
+
+                    <Spinner
+                        android:id="@+id/spSection"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/dp2"
+                        android:background="@drawable/spinnerbackground" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="@dimen/dp0"
+                    android:layout_height="@dimen/dp40"
+                    android:layout_marginRight="@dimen/dp5"
+                    android:layout_weight=".5"
+                    android:background="@drawable/spinnerbackground_two"
+                    android:orientation="vertical">
+                    <Spinner
+                        android:id="@+id/spSubject"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/dp2"
+                        android:visibility="gone"
+                        android:background="@drawable/spinnerbackground" />
+
+                    <EditText
+                        android:id="@+id/ed_sub_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp35"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinnerbackground_two"
+                        android:hint="Subject Name"
+                        android:inputType="textCapSentences"
+                        android:paddingStart="@dimen/dp10"
+                        android:textSize="@dimen/sp14"
+                        tools:ignore="Autofill,RtlSymmetry,TextFields" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Ll_normal_htl"
+                android:background="@drawable/card_design"
+                android:padding="@dimen/dp5">
+
+                <LinearLayout
+                    android:layout_width="@dimen/dp0"
+                    android:layout_height="@dimen/dp40"
+                    android:layout_marginRight="@dimen/dp5"
+                    android:layout_weight=".5"
+                    android:background="@drawable/spinnerbackground_two"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/ed_sub_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp35"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinnerbackground_two"
+                        android:hint="Subject Code"
+                        android:inputType="textCapWords"
+                        android:paddingStart="@dimen/dp10"
+                        android:textSize="@dimen/sp14"
+                        tools:ignore="Autofill,RtlSymmetry,TextFields" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="@dimen/dp0"
+                    android:layout_height="@dimen/dp40"
+                    android:layout_marginRight="@dimen/dp5"
+                    android:layout_weight=".5"
+                    android:background="@drawable/spinnerbackground_two"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/ed_subject_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp35"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinnerbackground_two"
+                        android:hint="Subject Type"
+
+                        android:inputType="textCapSentences"
+                        android:paddingStart="@dimen/dp10"
+                        android:textSize="@dimen/sp14"
+                        tools:ignore="Autofill,RtlSymmetry,TextFields" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="@dimen/dp120"
+                android:layout_height="@dimen/dp40"
+                android:layout_gravity="right"
+                android:layout_margin="@dimen/dp10"
+                android:background="@drawable/image_backgroung"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvAdd"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Add"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight=".2"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="50dp"
+                        android:layout_height="@dimen/dp50"
+                        android:background="@drawable/circle_bg"
+                        android:gravity="center"
+                        android:text="MATH" />
+
+                </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".8"
+                    android:orientation="horizontal">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_margin="@dimen/dp5"
+                    android:background="@drawable/sample_background"
+                    android:layout_height="match_parent" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
